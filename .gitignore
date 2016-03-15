@@ -63,3 +63,8 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+geotweets.tsv
+negative-words.txt
+positive-words.txt
+dataset_*
