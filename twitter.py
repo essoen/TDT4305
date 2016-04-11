@@ -8,12 +8,6 @@
 # = `en') for each city in the United States (place type = `city',
 # country = `US') for each day of week.
 
-# Solution
-# 1. Find all english tweets
-# 2. Seperate them by city in the US
-# 3. Seperate them by day of week
-# 4. Aggregate polarity and log to file for each day of the week for each city
-
 
 import sys
 import datetime
@@ -45,7 +39,8 @@ positiveWords = open(INPUT_DATA_PATH + "positive-words.txt", "r").read().splitli
 negativeWords = open(INPUT_DATA_PATH + "negative-words.txt", "r").read().splitlines()
 def calculateTextSentiment(text):
     sent = 0
-    for word in text.split():
+    words = text.split()
+    for word in words:
         if(word in positiveWords): sent +=1
         elif(word in negativeWords): sent -=1
     return sent
@@ -58,11 +53,11 @@ def add(a,b):
     return a+b
 
 tweets = twitterData \
-    .map(createTwitterDict).persist()\
+    .map(createTwitterDict)\
     .filter(lambda tweet: tweet["language"] == "en"
                           and tweet["country_code"] == "US"
                           and tweet["place_type"] == "city") \
     .map(lambda tweet: ((tweet["city_name"], getWeekday(tweet["utc_time"])), calculateTextSentiment(tweet["tweet"]))) \
     .combineByKey(int, add, add  ) \
-    .map(lambda K, V: K[0] + "\t" + K[1] + str(V) ) \
+    .map(lambda row: row[0][0] + "\t" + row[0][1] +  "\t" + str(row[1]) ) \
     .saveAsTextFile(OUTPUT_DATA_FILE)
