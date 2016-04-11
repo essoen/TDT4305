@@ -24,7 +24,7 @@ from pyspark import SparkContext
 INPUT_DATA_PATH = sys.argv[1]
 OUTPUT_DATA_FILE = sys.argv[2]
 
-sc = SparkContext("local", "Twitter Analysis")
+sc = SparkContext("local[*]", "Twitter Analysis")
 
 twitterData = sc.textFile(INPUT_DATA_PATH + '/geotweets.tsv', use_unicode=False)
 
