@@ -41,7 +41,6 @@ def find_nearest_city_and_country(o):
 #2. Calculate local time for each check-in (UTC time + timezone offset).
 #3. Assign a city and country to each check-in (use Haversine formula described below).
 checkins = (fsData
-            .sample(False, 0.01)
             .mapPartitionsWithIndex(lambda i, it: iter(list(it)[1:]) if i == 0 else it)
             .map(record_to_object)
             .map(calculate_local_time)
