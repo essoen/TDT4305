@@ -76,14 +76,13 @@ for field in fields:
 5. Calculate lengths of sessions as number of check-ins and provide a histogram
 of these lengths.
 '''
+
 session_lengths = (checkins
     .map(lambda x: (x['session_id'], 1))
     .reduceByKey(lambda a, b: a + b) # number of checkins per session
     .map(lambda x: (str(x[1]), 1)) # use this number as a key for the histogram count
-    .reduceByKey(lambda a, b: a + b))
-
-print 'Histogram of session lengths'
-print session_length_histogram.collect()
+    .reduceByKey(lambda a, b: a + b)
+    .saveAsTextFile('session_lengths'))
 
 
 '''
@@ -102,7 +101,7 @@ long_sessions = (checkins
     .filter(lambda o: len(o[1]) >= 4) # session length bigger than 4
     .map(calculate_distance) # calculate total session distance
     .filter(lambda o: o[2] > 50.0) # only sessions with distance > 50 km
-    .takeOrdered(100, key=lambda o: len(o[1]))) # take the 100 longest sessions
+    .takeOrdered(100, key=lambda o: -len(o[1]))) # take the 100 longest sessions
 
 '''
 (a) For these 100 sessions, output data about their check-ins into a CSV
@@ -112,7 +111,7 @@ etc. and also add check-in date in `YYYY-MM-DD HH:MM:SS' format
 
 with open('results.tsv', 'w') as q:
     for session in long_sessions:
-        (_, checkins, _) = session
+        (_, checkins, dist) = session
         for checkin in checkins:
-            q.write('\t'.join(checkin.values()) + '\n')
+            q.write('\t'.join(checkin.values() + [str(dist)]) + '\n')
 

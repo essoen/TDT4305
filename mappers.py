@@ -5,17 +5,17 @@ from collections import OrderedDict
 
 def record_to_object(o):
     o = o.split('\t')
-    return OrderedDict({
-        'checkin_id': o[0],
-        'user_id': o[1],
-        'session_id': o[2],
-        'utc_time': o[3],
-        'timezone_offset': o[4],
-        'lat': o[5],
-        'lon': o[6],
-        'category': o[7],
-        'subcategory': o[8]
-    })
+    r = OrderedDict()
+    r['checkin_id'] = o[0]
+    r['user_id'] = o[1]
+    r['session_id'] = o[2]
+    r['utc_time'] = o[3]
+    r['timezone_offset'] = o[4]
+    r['lat'] = o[5]
+    r['lon'] = o[6]
+    r['category'] = o[7]
+    r['subcategory'] = o[8]
+    return r
 
 
 def calculate_local_time(o):
