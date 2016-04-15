@@ -35,8 +35,8 @@ def createTwitterDict(t):
         "tweet": tweet[10],
     }
 
-positiveWords = open(INPUT_DATA_PATH + "positive-words.txt", "r").read().splitlines()
-negativeWords = open(INPUT_DATA_PATH + "negative-words.txt", "r").read().splitlines()
+positiveWords = sc.textFile("hdfs://dascosa09.idi.ntnu.no:8020/user/janryb/positive-words.txt").collect()
+negativeWords = sc.textFile("hdfs://dascosa09.idi.ntnu.no:8020/user/janryb/negative-words.txt").collect()
 def calculateTextSentiment(text):
     sent = 0
     words = text.split()
@@ -53,11 +53,10 @@ def add(a,b):
     return a+b
 
 tweets = twitterData \
-    .map(createTwitterDict)\
-    .filter(lambda tweet: tweet["language"] == "en"
-                          and tweet["country_code"] == "US"
-                          and tweet["place_type"] == "city") \
-    .map(lambda tweet: ((tweet["city_name"], getWeekday(tweet["utc_time"])), calculateTextSentiment(tweet["tweet"]))) \
+    .filter(lambda tweet: tweet[5] == "en"
+                          and tweet[2] == "US"
+                          and tweet[3] == "city") \
+    .map(lambda tweet: ((tweet[4], getWeekday(tweet[0])), calculateTextSentiment(tweet[10]))) \
     .combineByKey(int, add, add  ) \
     .map(lambda row: row[0][0] + "\t" + row[0][1] +  "\t" + str(row[1]) ) \
     .saveAsTextFile(OUTPUT_DATA_FILE)
