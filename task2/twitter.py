@@ -37,7 +37,7 @@ def createTwitterDict(t):
 
 positiveWords = sc.textFile("hdfs://dascosa09.idi.ntnu.no:8020/user/janryb/positive-words.txt").collect()
 negativeWords = sc.textFile("hdfs://dascosa09.idi.ntnu.no:8020/user/janryb/negative-words.txt").collect()
-def calculateTextSentiment(text):
+def calculateTextSentiment(text):l
     sent = 0
     words = text.split()
     for word in words:

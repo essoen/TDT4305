@@ -68,3 +68,5 @@ geotweets.tsv
 negative-words.txt
 positive-words.txt
 dataset_*
+twitter_data/
+
