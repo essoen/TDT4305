@@ -1,4 +1,4 @@
-# TDT4305
+# TDT4305 BIg Data Architecture
 
 ## Setup
 
