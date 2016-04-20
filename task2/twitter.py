@@ -13,31 +13,33 @@ from pyspark import SparkContext
 INPUT_DATA_PATH = sys.argv[1]
 OUTPUT_DATA_FILE = sys.argv[2]
 
-sc = SparkContext("local[*]", "Twitter Analysis")
+sc = SparkContext("local[*]", "TDT4305 Task 2: Twitter Analysis")
 
-twitterData = sc.textFile(INPUT_DATA_PATH + '/geotweets.tsv', use_unicode=False)
+twitter_dataset = sc.textFile(INPUT_DATA_PATH + '/geotweets.tsv', use_unicode=False)
 
 positive_words = sc.textFile("hdfs://dascosa09.idi.ntnu.no:8020/user/janryb/positive-words.txt").collect()
 negative_words = sc.textFile("hdfs://dascosa09.idi.ntnu.no:8020/user/janryb/negative-words.txt").collect()
+
 def calculate_text_sentiment(text):
-    sent = 0
+    sentiment = 0
     words = text.split()
     for word in words:
-        if word.lower() in positive_words: sent +=1
-        elif word.lower() in negative_words: sent -=1
-    return sent
+        lower_word = word.lower()
+        if lower_word in positive_words: sentiment +=1
+        elif lower_word in negative_words: sentiment -=1
+    return sentiment
 
 def get_weekday(timestamp, offset):
     corrected_timestamp = float(str(timestamp)[:10] + "." + str(timestamp)[10:13]) #for some reason the timestamp has length 12
     timezone_offset = timedelta(minutes=int(offset))
     local_time = datetime.datetime.utcfromtimestamp(corrected_timestamp) + timezone_offset
-    print(local_time)
     return calendar.day_name[local_time.weekday()]
 
 def add(a,b):
     return a+b
 
-tweets = twitterData \
+twitter_dataset \
+    .map(lambda row: row.split("\t")) \
     .filter(lambda tweet: tweet[5] == "en"
                           and tweet[2] == "US"
                           and tweet[3] == "city") \
