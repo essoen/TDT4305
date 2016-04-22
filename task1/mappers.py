@@ -1,3 +1,8 @@
+
+# author: Andreas Drivenes
+# email: andreas.drivenes@gmail.com
+
+
 from datetime import datetime, timedelta
 from utilities import haversine
 from collections import OrderedDict

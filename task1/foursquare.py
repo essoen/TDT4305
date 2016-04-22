@@ -1,3 +1,8 @@
+
+# author: Andreas Drivenes
+# email: andreas.drivenes@gmail.com
+
+
 from pyspark import SparkContext, SparkConf
 import os
 from mappers import record_to_object, calculate_local_time, calculate_distance

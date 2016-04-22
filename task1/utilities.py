@@ -1,3 +1,8 @@
+
+# author: Andreas Drivenes
+# email: andreas.drivenes@gmail.com
+
+
 from math import sqrt, radians, sin, cos, asin
 from datetime import datetime, timedelta
 
