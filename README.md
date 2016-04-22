@@ -1,4 +1,4 @@
-# TDT4305 BIg Data Architecture
+# TDT4305 Big Data Architecture
 
 ## Setup
 
@@ -7,5 +7,5 @@
 
 ## Run
 
-1. `spark-submit foursquare.py`
-2. `spark-submit twitter.py input_data_path output_data_file`, remember to use full path to the output file.
+1. `cd task1/ && spark-submit foursquare.py input_data_path`
+2. `cd task2/ && spark-submit twitter.py input_data_path output_data_file`, remember to use full path to the output file.
