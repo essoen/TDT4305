@@ -30,12 +30,12 @@ def calculate_local_time(o):
     return o
 
 
-def find_nearest_city_and_country(o):
+def find_nearest_city_and_country(o, countries):
     lat1, lon1 = float(o['lat']), float(o['lon'])
 
     start = 10000000000.0
     country, city = '', ''
-    for c in fsCountries:
+    for c in countries:
         dist = haversine(lat1, lon1, float(c[1]), float(c[2]))
         if dist < start:
             country = c[4]

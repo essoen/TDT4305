@@ -5,7 +5,8 @@
 
 from pyspark import SparkContext, SparkConf
 import os
-from mappers import record_to_object, calculate_local_time, calculate_distance
+from mappers import (record_to_object, calculate_local_time, calculate_distance,
+    find_nearest_city_and_country)
 from utilities import haversine
 
 path = os.getcwd() 
@@ -17,30 +18,9 @@ sc = SparkContext(conf=conf)
 
 # 1. Load the Foursquare dataset.
 fsData = sc.textFile(path + '/dataset_TIST2015.tsv', use_unicode=False)
-fsCountries = []
-
-# Todo: Read this file as a textFile and use cartesian for joining with fsData
-with open(path + '/dataset_TIST2015_Cities.txt', 'r') as f:
-    for line in f:
-        line = line.split('\t')
-        fsCountries.append(line)
-
-# Todo: Move this function to `mappers.py`
-def find_nearest_city_and_country(o):
-    lat1, lon1 = float(o['lat']), float(o['lon'])
-
-    start = 10000000000.0
-    country, city = '', ''
-    for c in fsCountries:
-        dist = haversine(lat1, lon1, float(c[1]), float(c[2]))
-        if dist < start:
-            country = c[4]
-            city = c[0]
-            start = dist
-
-    o['city'] = city
-    o['country'] = country
-    return o
+fsCountries = (sc.textFile(path + '/dataset_TIST2015_Cities.txt', use_unicode=False)
+    .map(lambda x: x.split('\t'))
+    .collect())
 
 
 #2. Calculate local time for each check-in (UTC time + timezone offset).
@@ -49,7 +29,7 @@ checkins = (fsData
             .mapPartitionsWithIndex(lambda i, it: iter(list(it)[1:]) if i == 0 else it)
             .map(record_to_object)
             .map(calculate_local_time)
-            .map(find_nearest_city_and_country))
+            .map(lambda x: find_nearest_city_and_country(x, fsCountries)))
 checkins.persist() # checkins will be used a lot later
 
 
