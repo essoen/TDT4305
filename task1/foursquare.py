@@ -4,21 +4,22 @@
 
 
 from pyspark import SparkContext, SparkConf
-import os
+import sys
 from mappers import (record_to_object, calculate_local_time, calculate_distance,
     find_nearest_city_and_country)
 from utilities import haversine
 
-path = os.getcwd() 
 conf = (SparkConf()
         .setMaster("local[*]")
         .setAppName("Foursquare Analysis"))
 
 sc = SparkContext(conf=conf)
 
+INPUT_DATA_PATH = sys.argv[1]
+
 # 1. Load the Foursquare dataset.
-fsData = sc.textFile(path + '/dataset_TIST2015.tsv', use_unicode=False)
-fsCountries = (sc.textFile(path + '/dataset_TIST2015_Cities.txt', use_unicode=False)
+fsData = sc.textFile(INPUT_DATA_PATH + '/dataset_TIST2015.tsv', use_unicode=False)
+fsCountries = (sc.textFile(INPUT_DATA_PATH + '/dataset_TIST2015_Cities.txt', use_unicode=False)
     .map(lambda x: x.split('\t'))
     .collect())
 
