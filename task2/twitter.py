@@ -11,13 +11,13 @@ from collections import defaultdict
 
 from pyspark import SparkContext, SparkConf
 
-INPUT_DATA_PATH = sys.argv[1]
-OUTPUT_DATA_FILE = sys.argv[2]
+TWEET_FILE_PATH = sys.argv[1]
+OUTPUT_DATA_PATH = sys.argv[2]
 
 conf = (SparkConf().setAppName("TDT4305 Task 2: Twitter Analysis"))
 sc = SparkContext(conf=conf)
 
-twitter_dataset = sc.textFile(INPUT_DATA_PATH + '/geotweets.tsv', use_unicode=False)
+twitter_dataset = sc.textFile(TWEET_FILE_PATH, use_unicode=False)
 
 positive_words = sc.textFile("hdfs://dascosa09.idi.ntnu.no:8020/user/janryb/positive-words.txt").collect()
 negative_words = sc.textFile("hdfs://dascosa09.idi.ntnu.no:8020/user/janryb/negative-words.txt").collect()
@@ -50,9 +50,8 @@ twitter_dataset \
     .filter(lambda tweet: tweet[5] == "en"
                           and tweet[2] == "US"
                           and tweet[3] == "city") \
-    .map(lambda tweet: ((tweet[4], get_weekday(tweet[0], tweet[8])), tweet[10])) \
-    .map(lambda row: (row[0], calculate_text_sentiment(row[1]))) \
+    .map(lambda tweet: ((tweet[4], get_weekday(tweet[0], tweet[8])), calculate_text_sentiment(tweet[10])) ) \
     .reduceByKey(add) \
     .map(pretty_print_row) \
     .coalesce(1) \
-    .saveAsTextFile(OUTPUT_DATA_FILE)
+    .saveAsTextFile(OUTPUT_DATA_PATH)

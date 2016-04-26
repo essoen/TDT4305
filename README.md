@@ -7,5 +7,5 @@
 
 ## Run
 
-1. `cd task1/ && spark-submit foursquare.py input_data_path`
-2. `cd task2/ && spark-submit twitter.py input_data_path output_data_file`, remember to use full path to the output file.
+1. `spark-submit task1/foursquare.py input_data_path`
+2. `spark-submit task2/twitter.py input_data_file output_data_file`.
