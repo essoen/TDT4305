@@ -1,0 +1,17 @@
+\chapter{Sentiment Analysis on Twitter}
+
+To solve this exercise we developed the following algorithm:
+
+\begin{enumerate}
+    \item Load the dataset
+    
+    \item Use \code{filter} in Spark to remove all the tweets that are not in english, and are not American cities. That is we removed tweets that had \code{lang} unequal to "en", \code{country\_code} unequal to "US" and \code{place\_type} unequal to "city".
+    
+    \item With the \code{map}-method in Spark we created a new dataset on the limited one. They new dataset consist of \code{(key, value)}-pairs, where they key is a tuple \code{(city\_name, weekday)}. The value is the tweet text. 
+    
+    \item A new \code{map}-call calculates the sentiment for each tweet. We did not do it in the last step, as doing it as a seperate step saved us 2 seconds.
+    
+    \item Now we simply used \code{reduceByKey} in Spark to combine the elements that had the same key, that is those with the same city and weekday. We just added the sentiment, that is the value, for the tuples.
+    
+    \item Now the dataset had one entry for each city and weekday, and we we combined it all to one single dataset, the used \code{saveAsTextFile} in Spark to write to file.
+\end{enumerate}
